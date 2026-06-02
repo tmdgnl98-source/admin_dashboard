@@ -144,11 +144,8 @@ function LoginFormInner() {
             SSO로 계속하기 (준비 중)
           </Button>
 
-          <p className="mt-8 text-center text-sm text-muted-foreground">
-            아직 계정이 없으신가요?{' '}
-            <Link href="/signup" className="font-semibold text-primary hover:underline">
-              파트너 가입
-            </Link>
+          <p className="mt-8 text-center text-xs text-muted-foreground">
+            초대받지 못하셨다면 운영팀(1544-4279)으로 문의해주세요.
           </p>
         </>
       )}
