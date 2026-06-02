@@ -1,9 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import Image from 'next/image'
+import { useRouter, usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { ChevronDown, ChevronRight } from 'lucide-react'
+import { ChevronDown, ChevronRight, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { navItems } from '@/lib/navigation'
 import { UserRole } from '@/types/navigation'
@@ -18,6 +19,12 @@ import {
   FlaskConical,
 } from 'lucide-react'
 
+const ROLE_LABEL: Record<UserRole, string> = {
+  main_admin: '본사 운영팀',
+  normal_admin: '일반 직원',
+  partner_admin: '파트너',
+}
+
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   building: Building2,
   users: Users,
@@ -29,13 +36,34 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   'flask-conical': FlaskConical,
 }
 
-interface SidebarProps {
-  userRole?: UserRole
+interface SidebarUser {
+  id: string
+  name: string
+  email: string
+  role: UserRole
 }
 
-export function Sidebar({ userRole = 'main_admin' }: SidebarProps) {
+interface SidebarProps {
+  user: SidebarUser
+}
+
+export function Sidebar({ user }: SidebarProps) {
+  const userRole = user.role
+  const router = useRouter()
   const pathname = usePathname()
   const [openMenus, setOpenMenus] = useState<Set<string>>(new Set(['대시보드']))
+  const [loggingOut, setLoggingOut] = useState(false)
+
+  const handleLogout = async () => {
+    if (loggingOut) return
+    setLoggingOut(true)
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+    } finally {
+      router.replace('/login')
+      router.refresh()
+    }
+  }
 
   const toggleMenu = (title: string) => {
     setOpenMenus((prev) => {
@@ -55,10 +83,18 @@ export function Sidebar({ userRole = 'main_admin' }: SidebarProps) {
 
   return (
     <aside className="flex h-screen w-60 flex-col bg-sidebar text-sidebar-foreground">
-      <div className="flex h-14 items-center border-b border-sidebar-border px-4">
-        <span className="text-lg font-bold tracking-tight text-white">
-          차지비 관리자
-        </span>
+      <div className="flex h-16 items-center gap-2 border-b border-sidebar-border px-4">
+        <div className="rounded-md bg-white px-2.5 py-1.5">
+          <Image
+            src="/GSchargev_logo.png"
+            alt="GS 차지비"
+            width={120}
+            height={28}
+            priority
+            className="h-6 w-auto"
+          />
+        </div>
+        <span className="text-xs text-white/70">관리자</span>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-2 py-3 space-y-0.5">
@@ -139,22 +175,26 @@ export function Sidebar({ userRole = 'main_admin' }: SidebarProps) {
 
       <div className="border-t border-sidebar-border p-3">
         <div className="flex items-center gap-2.5 rounded-md px-2 py-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-sidebar-primary text-xs font-bold text-white">
-            관
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sidebar-primary text-xs font-bold text-white">
+            {user.name.slice(0, 1)}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium text-sidebar-foreground truncate">
-              관리자
+            <p className="truncate text-sm font-medium text-sidebar-foreground">
+              {user.name}
             </p>
-            <p className="text-xs text-sidebar-foreground/50 truncate">
-              {userRole === 'main_admin'
-                ? '차지비 관리자'
-                : userRole === 'partner_admin'
-                  ? '위탁 관리자'
-                  : '일반 관리자'}
+            <p className="truncate text-xs text-sidebar-foreground/60">
+              {ROLE_LABEL[userRole]} · {user.email}
             </p>
           </div>
         </div>
+        <button
+          onClick={handleLogout}
+          disabled={loggingOut}
+          className="mt-1 flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground disabled:opacity-50"
+        >
+          <LogOut className="h-4 w-4" />
+          {loggingOut ? '로그아웃 중...' : '로그아웃'}
+        </button>
       </div>
     </aside>
   )
