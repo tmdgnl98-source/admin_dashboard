@@ -1,0 +1,99 @@
+/**
+ * 시맨틱 토큰 — docs/admin.html 의 status palette 정확 값으로 정렬.
+ *
+ * Status (admin.html):
+ *   --green  #12B76A  / --green-bg #ECFDF3
+ *   --amber  #F79009  / --amber-bg #FFFAEB
+ *   --red    #F04438  / --red-bg   #FEF3F2
+ *   --blue   #2E90FA  / --blue-bg  #EFF8FF
+ *   --gray   #98A2B3  / --gray-bg  #F2F4F7
+ */
+
+:root {
+  /* ─── shadcn 표준 시맨틱 ─────────────────────────────────────── */
+  --primary: var(--brand-primary);
+  --primary-foreground: var(--brand-primary-foreground);
+  --accent: var(--brand-accent);
+  --accent-foreground: var(--brand-accent-foreground);
+
+  /* ─── 도메인 시맨틱 ─────────────────────────────────────────── */
+  /* success — 정상·완료·납부완료·발송완료 */
+  --success: #12b76a;
+  --success-foreground: #ffffff;
+  --success-soft: #ecfdf3;
+  --success-soft-foreground: #027a48;
+
+  /* warning — 점검중·수리중·납부대기·만료임박 */
+  --warning: #f79009;
+  --warning-foreground: #ffffff;
+  --warning-soft: #fffaeb;
+  --warning-soft-foreground: #b54708;
+
+  /* danger — 고장·미납·발송실패·만료 */
+  --danger: #f04438;
+  --danger-foreground: #ffffff;
+  --danger-soft: #fef3f2;
+  --danger-soft-foreground: #b42318;
+
+  /* info — 접수완료·진행중·일반 알림 */
+  --info: #2e90fa;
+  --info-foreground: #ffffff;
+  --info-soft: #eff8ff;
+  --info-soft-foreground: #175cd3;
+
+  /* ─── 차트 시리즈 (admin.html 톤) ──────────────────────────── */
+  --chart-1: var(--brand-primary);  /* emerald */
+  --chart-2: #2e90fa;                /* blue */
+  --chart-3: #7a5af8;                /* indigo */
+  --chart-4: #f79009;                /* amber */
+  --chart-5: #98a2b3;                /* gray */
+
+  /* ─── 사이드바 (admin.html dark slate) ─────────────────────── */
+  --sidebar: var(--brand-dark);
+  --sidebar-foreground: var(--brand-dark-foreground);
+  --sidebar-primary: var(--brand-primary);
+  --sidebar-primary-foreground: var(--brand-primary-foreground);
+  --sidebar-accent: #1f2937;
+  --sidebar-accent-foreground: #f2f4f7;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: var(--brand-primary);
+
+  /* ─── 배경 ──────────────────────────────────────────────────── */
+  --background: var(--brand-surface);
+  --foreground: var(--brand-surface-foreground);
+
+  /* destructive 별칭 (shadcn 호환) */
+  --destructive: var(--danger);
+}
+
+.dark {
+  --primary: var(--brand-primary);
+  --primary-foreground: var(--brand-primary-foreground);
+  --accent: var(--brand-accent);
+  --accent-foreground: var(--brand-accent-foreground);
+
+  --success: #32d583;
+  --success-foreground: #0b1220;
+  --success-soft: #053321;
+  --success-soft-foreground: #6ce9a6;
+
+  --warning: #fdb022;
+  --warning-foreground: #0b1220;
+  --warning-soft: #4a2a05;
+  --warning-soft-foreground: #fec84b;
+
+  --danger: #f97066;
+  --danger-foreground: #0b1220;
+  --danger-soft: #4a1310;
+  --danger-soft-foreground: #fda29b;
+
+  --info: #53b1fd;
+  --info-foreground: #0b1220;
+  --info-soft: #0b2740;
+  --info-soft-foreground: #84caff;
+
+  --background: var(--brand-surface);
+  --foreground: var(--brand-surface-foreground);
+
+  --destructive: var(--danger);
+}

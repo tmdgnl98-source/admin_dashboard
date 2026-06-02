@@ -1,0 +1,70 @@
+/**
+ * BI 토큰 — BI가 바뀌면 이 파일만 수정한다.
+ *
+ * docs/admin.html(VoltHost) 정확한 추출 값:
+ *   Default brand는 BLUE (#1570EF). gradient는 green→brand→green 으로 섞여서
+ *   화면에서는 청록-파랑이 어우러진 다채로운 톤이 나온다.
+ *
+ *   admin.html BRAND_PALETTES (전환 가능):
+ *     emerald  #00875A / #007A51 / 50 #E6F4EF / 100 #CCE9DE
+ *     blue     #1570EF / #1A6CD8 / 50 #EFF8FF / 100 #D1E9FF  ← default
+ *     indigo   #7A5AF8 / #6941E0 / 50 #F4F0FF / 100 #E3DAFF
+ *     slate    #0F1729 / #1F2937 / 50 #F2F4F7 / 100 #E5E7EB
+ *     amber    #DC6803 / #B54708 / 50 #FFFAEB / 100 #FEF0C7
+ *
+ *   다른 BI로 바꾸려면 :root 의 --brand-primary 외 5개만 위 표대로 교체.
+ */
+
+:root {
+  /* ─── Brand Palette: BLUE (admin.html default) ─────────────── */
+  --brand-primary: #1570ef;
+  --brand-primary-hover: #1a6cd8;
+  --brand-primary-foreground: #ffffff;
+
+  --brand-soft: rgba(21, 112, 239, 0.08);
+  --brand-50: #eff8ff;
+  --brand-100: #d1e9ff;
+
+  --brand-accent: var(--brand-50);
+  --brand-accent-foreground: var(--brand-primary);
+
+  /* 배경·표면 (admin.html neutral 정확 값) */
+  --brand-surface: #f6f7f9;
+  --brand-surface-2: #fafbfc;
+  --brand-surface-card: #ffffff;
+  --brand-surface-foreground: #0b1220;
+
+  /* 사이드바·헤더 다크 톤 */
+  --brand-dark: #0f1729;
+  --brand-dark-foreground: #f2f4f7;
+
+  /* 로고 마크 */
+  --brand-logo: var(--brand-primary);
+
+  /* 브랜드 그라데이션 — admin.html 정확 식:
+   *   green → brand → green 으로 양끝은 항상 green tint를 유지.
+   *   brand 만 바꾸면 가운데 톤만 따라 변경되어 풍성한 색감 유지.
+   */
+  --brand-gradient: linear-gradient(135deg, #0a6e49 0%, var(--brand-primary) 60%, #18a06b 100%);
+}
+
+.dark {
+  --brand-primary: #4b9aff;
+  --brand-primary-hover: #6cb0ff;
+  --brand-primary-foreground: #0b1220;
+
+  --brand-soft: rgba(75, 154, 255, 0.14);
+  --brand-50: #0b2740;
+  --brand-100: #11365a;
+
+  --brand-accent: var(--brand-50);
+  --brand-accent-foreground: var(--brand-primary);
+
+  --brand-surface: #0b1220;
+  --brand-surface-2: #0f1729;
+  --brand-surface-card: #111a2e;
+  --brand-surface-foreground: #f2f4f7;
+
+  --brand-dark: #060a14;
+  --brand-dark-foreground: #f2f4f7;
+}
