@@ -21,8 +21,10 @@ export const navItems: NavItem[] = [
     icon: 'users',
     roles: ['main_admin'],
     children: [
+      { title: '신규 계정 등록', href: '/accounts/new' },
       { title: '계정별 권한 관리', href: '/accounts/permissions' },
       { title: '충전소별 계정 관리', href: '/accounts/stations' },
+      { title: '감사 로그', href: '/accounts/audit-log' },
     ],
   },
   {
@@ -62,15 +64,17 @@ export const navItems: NavItem[] = [
     children: [
       { title: '공지사항', href: '/customer/notices' },
       { title: '자료게시판', href: '/customer/board' },
+      { title: '메일,문자 발송', href: '/customer/messaging' },
     ],
   },
-  {
-    title: 'Beta',
-    icon: 'flask-conical',
-    roles: ['main_admin'],
-    children: [
-      { title: 'AI 상담사 (챗봇)', href: '/beta/chatbot' },
-      { title: 'AI 리포트', href: '/beta/report' },
-    ],
-  },
+  // Beta(AI 챗봇, AI 리포트)는 임시 비활성화. 활성화 시 아래 주석 해제.
+  // {
+  //   title: 'Beta',
+  //   icon: 'flask-conical',
+  //   roles: ['main_admin'],
+  //   children: [
+  //     { title: 'AI 상담사 (챗봇)', href: '/beta/chatbot' },
+  //     { title: 'AI 리포트', href: '/beta/report' },
+  //   ],
+  // },
 ]
