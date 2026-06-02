@@ -10,6 +10,8 @@ import {
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { TrendingUp, DollarSign, Receipt, Mail, Loader2, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { KpiCard } from '@/components/ui/summary-card'
+import { StatusBadge } from '@/components/ui/status-badge'
 
 // ─── 타입 ────────────────────────────────────────────────────────────────────
 
@@ -128,11 +130,6 @@ function getPrev6Months(year: number, month: number) {
 const YEARS = ['2026', '2025', '2024']
 const MONTHS = Array.from({ length: 12 }, (_, i) => String(i + 1))
 const CYCLE_OPTIONS = ['월', '분기', '반기', '년']
-
-const invoiceStatusColor: Record<string, string> = {
-  발송완료: 'bg-green-100 text-green-800',
-  발송실패: 'bg-red-100 text-red-800',
-}
 
 // ─── 페이지 ──────────────────────────────────────────────────────────────────
 
@@ -268,27 +265,24 @@ export default function SettlementHistoryPage() {
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                   <KpiCard
                     icon={TrendingUp}
-                    label="총 매출"
+                    title="총 매출"
                     value={totalRevenue.toLocaleString()}
                     unit="원"
-                    color="text-blue-600"
-                    bg="bg-blue-50"
+                    tone="info"
                   />
                   <KpiCard
                     icon={DollarSign}
-                    label="총 정산금액"
+                    title="총 정산금액"
                     value={totalSettlement.toLocaleString()}
                     unit="원"
-                    color="text-green-600"
-                    bg="bg-green-50"
+                    tone="success"
                   />
                   <KpiCard
                     icon={Receipt}
-                    label="위탁수수료 합계"
+                    title="위탁수수료 합계"
                     value={totalFee.toLocaleString()}
                     unit="원"
-                    color="text-purple-600"
-                    bg="bg-purple-50"
+                    tone="neutral"
                   />
                 </div>
 
@@ -300,7 +294,7 @@ export default function SettlementHistoryPage() {
                   <CardContent>
                     <ResponsiveContainer width="100%" height={200}>
                       <BarChart data={chartData} barSize={32}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                        <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                         <XAxis dataKey="month" tick={{ fontSize: 12 }} />
                         <YAxis
                           tick={{ fontSize: 11 }}
@@ -311,7 +305,7 @@ export default function SettlementHistoryPage() {
                         <Tooltip
                           formatter={(value) => [`${Number(value ?? 0).toLocaleString()}원`, '정산금액']}
                         />
-                        <Bar dataKey="amount" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="amount" fill="var(--color-chart-1)" radius={[4, 4, 0, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </CardContent>
@@ -347,7 +341,7 @@ export default function SettlementHistoryPage() {
                             <TableCell className="text-right tabular-nums">
                               {row.rate}%
                             </TableCell>
-                            <TableCell className="text-right font-semibold tabular-nums text-green-700">
+                            <TableCell className="text-right font-semibold tabular-nums text-success">
                               {row.settlement.toLocaleString()}원
                             </TableCell>
                             <TableCell className="text-right tabular-nums text-muted-foreground">
@@ -362,7 +356,7 @@ export default function SettlementHistoryPage() {
                             {totalRevenue.toLocaleString()}원
                           </TableCell>
                           <TableCell />
-                          <TableCell className="text-right tabular-nums text-green-700">
+                          <TableCell className="text-right tabular-nums text-success">
                             {totalSettlement.toLocaleString()}원
                           </TableCell>
                           <TableCell className="text-right tabular-nums text-muted-foreground">
@@ -442,7 +436,7 @@ export default function SettlementHistoryPage() {
                             {row.revenue.toLocaleString()}원
                           </TableCell>
                           <TableCell className="text-right tabular-nums">{row.rate}%</TableCell>
-                          <TableCell className="text-right font-semibold tabular-nums text-green-700">
+                          <TableCell className="text-right font-semibold tabular-nums text-success">
                             {row.settlement.toLocaleString()}원
                           </TableCell>
                         </TableRow>
@@ -480,9 +474,7 @@ export default function SettlementHistoryPage() {
                           <TableCell className="font-medium">{row.target}</TableCell>
                           <TableCell className="text-muted-foreground">{row.email}</TableCell>
                           <TableCell className="text-center">
-                            <span className={cn('rounded-full px-2 py-0.5 text-xs font-medium', invoiceStatusColor[row.status])}>
-                              {row.status}
-                            </span>
+                            <StatusBadge status={row.status} />
                           </TableCell>
                         </TableRow>
                       ))}
@@ -498,37 +490,3 @@ export default function SettlementHistoryPage() {
   )
 }
 
-// ─── KPI 카드 ────────────────────────────────────────────────────────────────
-
-function KpiCard({
-  icon: Icon,
-  label,
-  value,
-  unit,
-  color,
-  bg,
-}: {
-  icon: React.ComponentType<{ className?: string }>
-  label: string
-  value: string
-  unit: string
-  color: string
-  bg: string
-}) {
-  return (
-    <Card className="shadow-sm">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{label}</CardTitle>
-        <div className={cn('rounded-md p-1.5', bg)}>
-          <Icon className={cn('h-4 w-4', color)} />
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-baseline gap-1">
-          <span className="text-2xl font-bold tabular-nums">{value}</span>
-          <span className="text-sm text-muted-foreground">{unit}</span>
-        </div>
-      </CardContent>
-    </Card>
-  )
-}
