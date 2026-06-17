@@ -72,9 +72,11 @@ function SettlementGroupContent() {
   const [saving, setSaving] = useState(false)
 
   // 편집 중인 폼 상태
+  const [formGroupName, setFormGroupName] = useState<string>('')
   const [formSettings, setFormSettings] = useState<GroupSettings | null>(null)
   const [newStation, setNewStation] = useState({ id: '', name: '' })
   const [addingStation, setAddingStation] = useState(false)
+  const [nameError, setNameError] = useState<string | null>(null)
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -103,27 +105,48 @@ function SettlementGroupContent() {
     setSelectedGroup(name)
     setEditMode(false)
     setFormSettings(null)
+    setFormGroupName('')
+    setNameError(null)
     setAddingStation(false)
   }
 
   const handleEdit = () => {
     if (!currentGroup) return
     setFormSettings({ ...currentGroup.settings })
+    setFormGroupName(currentGroup.name)
+    setNameError(null)
     setEditMode(true)
   }
 
   const handleCancel = () => {
     setEditMode(false)
     setFormSettings(null)
+    setFormGroupName('')
+    setNameError(null)
     setAddingStation(false)
     setNewStation({ id: '', name: '' })
   }
 
+  const validateName = (raw: string): string | null => {
+    const trimmed = raw.trim()
+    if (!trimmed) return '그룹명을 입력해 주세요.'
+    if (trimmed === currentGroup?.name) return null
+    const conflict = groups.some((g) => g.name === trimmed)
+    if (conflict) return '이미 존재하는 그룹명입니다.'
+    return null
+  }
+
   const handleSave = async () => {
     if (!currentGroup || !formSettings) return
+    const nextName = formGroupName.trim()
+    const err = validateName(nextName)
+    if (err) {
+      setNameError(err)
+      return
+    }
     setSaving(true)
     try {
-      // 해당 그룹의 모든 행 settings 업데이트
+      // 해당 그룹의 모든 행 settings + 그룹명 업데이트
       await Promise.all(
         currentGroup.stations.map((station) =>
           fetch('/api/settlement-groups', {
@@ -134,7 +157,7 @@ function SettlementGroupContent() {
               action: 'update',
               rowIndex: station.rowIndex,
               data: {
-                정산그룹: currentGroup.name,
+                정산그룹: nextName,
                 충전소ID: station.id,
                 충전소명: station.name,
                 ...formSettings,
@@ -143,9 +166,13 @@ function SettlementGroupContent() {
           })
         )
       )
+      // 새 그룹명 선택 유지
+      if (nextName !== currentGroup.name) setSelectedGroup(nextName)
       await fetchData()
       setEditMode(false)
       setFormSettings(null)
+      setFormGroupName('')
+      setNameError(null)
     } finally {
       setSaving(false)
     }
@@ -243,19 +270,44 @@ function SettlementGroupContent() {
           {/* 우측: 상세 편집 */}
           {currentGroup && (
             <Card className="flex-1 overflow-y-auto shadow-sm">
-              <CardHeader className="flex flex-row items-center justify-between pb-4">
-                <div>
-                  <CardTitle className="text-base">{currentGroup.name}</CardTitle>
-                  <p className="mt-0.5 text-xs text-muted-foreground">정산 조건 설정</p>
+              <CardHeader className="flex flex-row items-start justify-between gap-3 pb-4">
+                <div className="min-w-0 flex-1">
+                  {editMode ? (
+                    <div className="flex flex-col gap-1">
+                      <label className="text-xs font-medium text-muted-foreground">정산그룹명</label>
+                      <input
+                        type="text"
+                        value={formGroupName}
+                        onChange={(e) => {
+                          setFormGroupName(e.target.value)
+                          if (nameError) setNameError(null)
+                        }}
+                        className={cn(
+                          'w-full max-w-sm rounded-md border px-3 py-1.5 text-base font-semibold outline-none transition-colors',
+                          nameError
+                            ? 'border-destructive focus:ring-1 focus:ring-destructive'
+                            : 'border-input bg-background focus:border-primary focus:ring-1 focus:ring-primary'
+                        )}
+                      />
+                      {nameError && (
+                        <p className="text-xs text-destructive">{nameError}</p>
+                      )}
+                    </div>
+                  ) : (
+                    <>
+                      <CardTitle className="text-base">{currentGroup.name}</CardTitle>
+                      <p className="mt-0.5 text-xs text-muted-foreground">정산 조건 설정</p>
+                    </>
+                  )}
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex shrink-0 items-center gap-2">
                   {!editMode && (
                     <Button size="sm" onClick={handleEdit}>수정</Button>
                   )}
                   {editMode && (
                     <>
                       <Button size="sm" variant="outline" onClick={handleCancel} disabled={saving}>취소</Button>
-                      <Button size="sm" onClick={handleSave} disabled={saving}>
+                      <Button size="sm" onClick={handleSave} disabled={saving || !!nameError}>
                         {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : '저장'}
                       </Button>
                     </>
